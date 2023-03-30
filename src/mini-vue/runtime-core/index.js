@@ -86,21 +86,22 @@ export function createRenderer(options) {
     const setupRenderEffect= (instance,container)=>{
         //声明组件更新函数
         const componetUpdateFn = ()=>{
+            const { render } = instance.vnode.type;
             if (!instance.isMounted) {
                 //创建阶段
                 //执行组件渲染函数获取vnode
-                const {render} = instance.vnode.type
-                const vnode= render.call(instance.data)
+                // const {render} = instance.vnode.type
+                const vnode= (instance.subtree = render.call(instance.data));
                 //递归patch嵌套节点
                 patch(null,vnode,container)
 
                 //挂载钩子
                 if (instance.vnode.type.isMounted) {
                     instance.vnode.type.isMounted.call(instance.data)
-                }else{
-                    //更新阶段
-
                 }
+                instance.isMounted = true;
+            }else{
+                //
             }
         }
         //建立更新机制
@@ -114,7 +115,8 @@ export function createRenderer(options) {
             //创建阶段
             mountElement(n2,container)
         }else{
-
+            //更新阶段
+            patchElement(n1,n2)
         }
     }
 
@@ -125,21 +127,16 @@ export function createRenderer(options) {
         if (typeof vnode.children === 'string') {
             el.textContent = vnode.children
         }else{
-            vnode.children.forEach(child=> patch(null,child,el));
+            vnode.children.forEach((child)=> patch(null,child,el));
         }
-
         //插入元素
         hostInsert(el,container)
     }
-
-
-
     //返回一个渲染器实例
     return{
         render,
         createApp:createAppAPI(render)
     }
-
 }
 
 export function createAppAPI(render) {
@@ -151,10 +148,8 @@ export function createAppAPI(render) {
                 const vnode = createVNode(rootComponent)
                 //将vnode转为真实dom，并追加到宿主selector
                 render(vnode,container)
-
             }
         }
-
         return app
     }
 }
