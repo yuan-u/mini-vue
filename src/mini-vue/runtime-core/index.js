@@ -10,7 +10,7 @@ export function createRenderer(options) {
     const {
         createElement:hostCreateElement,
         insert:hostInsert
-    }= options
+    }= options;
 
     //无虚拟dom版本
     // const render = (rootComponent,selector) =>{
@@ -146,6 +146,7 @@ export function createAppAPI(render) {
     return function createApp(rootComponent) {
         const app = {
             mount(container){
+                console.log('createAppAPI container',container);
                 // render(rootComponent, selector) //无虚拟dom版
                 const vnode = createVNode(rootComponent)
                 //将vnode转为真实dom，并追加到宿主selector

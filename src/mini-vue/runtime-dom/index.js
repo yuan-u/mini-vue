@@ -40,6 +40,7 @@ export function createApp(rootComponent) {
     const mount = app.mount()
     app.mount = function (selectorOrContainer) {
         const container = document.querySelector(selectorOrContainer)
+        console.log(' const container',container);
         mount(container)
     }
     return app
